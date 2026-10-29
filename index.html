@@ -15,7 +15,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Título del proyecto -->
-    <title>Editor Eléctrico AEA / ERSeP</title>
+    <title>Editor CAT-III</title>
 
     <!-- Bootstrap (solo layout base) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -42,8 +42,9 @@
             <div class="editor-title fw-bold">
                 Editor Eléctrico
             </div>
-            <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom"
-                aria-controls="offcanvasBottom">Proyecto Vivienda Datos</button>
+            <!-- <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom"
+                aria-controls="offcanvasBottom">Proyecto Vivienda Datos
+            </button> -->
 
 
             <!-- <div id="contadorObjetos" class="d-flex gap-3 small">
@@ -52,24 +53,66 @@
                 <span>Tableros: <strong id="countTableros">0</strong></span>
                 <span>Cables: <strong id="countCables">0</strong></span>
             </div> -->
+
+
+            <!-- <button id="btnTema" class="btn btn-sm btn-light">
+                Tema
+            </button> -->
+
+
+            <div class="row g-3 align-items-center mb-1">
+                <div class="col-auto">
+                    <!-- <label for="selectorCircuitos" class="form-label fw-bold m-0">Circuito:</label> -->
+                </div>
+                <div class="col-auto">
+                    <select id="selectorCircuitos" class="form-select">
+                        <option value="" disabled selected>-- Circuito --</option>
+                        <option value="IUG">IUG</option>
+                        <option value="IUE">IUE</option>
+                        <option value="TUG">TUG</option>
+                        <option value="TUE">TUE</option>
+                        <option value="ACU">ACU</option>
+                        <option value="MBTF">MBTF</option>
+                        <option value="MBTS">MBTS</option>
+                        <option value="APM">APM</option>
+                        <option value="ATE">ATE</option>
+                        <option value="ITE">ITE</option>
+                        <option value="OCE">OCE</option>
+                        <option value="SECCIONAL">SECCIONAL</option>
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <button id="btnCrear" class="btn btn-primary fw-bold">+</button>
+                    <button id="btnEliminarActivo" class="btn btn-danger">-</button>
+                </div>
+
+            </div>
+
+
+            <!-- CONTENEDOR DE LOS BOTONES DINÁMICOS -->
+            <div id="contenedorBotones" style="margin-top: 15px; display: flex; gap: 10px;">
+
+            </div>
+            <!-- Elemento visual solo para testear el estado activo (opcional) -->
+            <!-- <p style="margin-top: 15px;">Circuito activo actual: <strong id="visorActivo">Ninguno</strong></p> -->
+
             <button id="btnPanelPropiedades" class="btn btn-sm btn-light">
                 ☰
             </button>
 
-            <button id="btnTema" class="btn btn-sm btn-light">
-                Tema
-            </button>
-
         </header>
 
+        <div id="selectorDeCircuitos">
+            <!--Aca se generan los botones cuando se crean los circuitos-->
+        </div>
         <!-- TOOLBAR FLOTANTE -->
         <div id="toolbar" class="excal-toolbar shadow-sm">
 
-            <button id="btnCargarPlano" class=" tool-btn">
+            <!-- <button id="btnCargarPlano" class=" tool-btn">
                 <img src="assets/svg/plano.png" width="44">
             </button>
 
-            <input type="file" id="inputPlano" accept="image/*" hidden>
+            <input type="file" id="inputPlano" accept="image/*" hidden> -->
 
 
             <div class="tool-group">
@@ -115,6 +158,31 @@
                 </div>
 
             </div>
+
+            <!-- <div class="tool-group">
+
+                <button id="btnCircuitos" class="tool-btn">
+                    CIRC
+                </button>
+
+                <div id="menuCircuitos" class="tool-submenu">
+
+                    <button id="toolBoca" class="tool-btn">
+                        IUG
+                    </button>
+
+                    <button id="toolBocaPared" class="tool-btn">
+                        TUG
+                    </button>
+
+                    <button id="toolToma" class="tool-btn">
+                        ACU
+                    </button>
+
+
+                </div>
+
+            </div> -->
 
 
             <button id="toolSelect" class="tool-btn">
@@ -296,7 +364,7 @@
 
             <aside id="panelRight" class="panel panel-right">
 
-                <h5>Propiedades</h5>
+                <h5>Información del proyecto</h5>
 
                 <!-- <div id="properties">
                     <p class="text-muted">Selecciona un objeto</p>
@@ -305,24 +373,58 @@
                 <div class="mb-3 p-2 bg-dark text-white rounded">
 
                     <h6 class="mb-2">Información del proyecto</h6>
+                    <!-- Botón para disparar la exportación -->
+                    <button id="btnExportarPDF"
+                        style="padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        📄 Exportar Plano a JPG
+                    </button>
+
+                   
+                    
 
                     <div class="small">
                         Bocas: <strong id="countBocas">0</strong><br>
                         Tomas: <strong id="countTomas">0</strong><br>
                         Tableros: <strong id="countTableros">0</strong><br>
                         Cables: <strong id="countCables">0</strong>
+                        Circuito: <strong id="circuitosCreados">0</strong>
+                        BIUG: <strong id="bocasIUG">0</strong>
                     </div>
 
+
                 </div>
+
+                <button class="btn btn-primary mt-3 mb-3" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">Proyecto Vivienda Datos
+                </button>
 
 
                 <!-- <div id="toolInfo">
                     Herramienta activa: <span id="toolActivo">Seleccionar</span>
                 </div> -->
 
-                <div id="panelPropiedades">
+                <div id="panelPropiedades" class="mt-3">
 
                     <h5>Propiedades</h5>
+
+                    <h5 id="circuitoActivo">Circuito Activo</h5>
+
+                    <!-- <div class="row g-3 align-items-center mb-4">
+                        <div class="col-auto">
+                            <label for="selectorCircuitos" class="form-label fw-bold m-0">Tipo de circuito:</label>
+                        </div>
+                        <div class="col-auto">
+                            <select id="selectorCircuitos" class="form-select">
+                                <option value="" disabled selected>-- Seleccione --</option>
+                                <option value="IUG">IUG</option>
+                                <option value="TUG">TUG</option>
+                                <option value="ACU">ACU</option>
+                            </select>
+                        </div>
+                        <div class="col-auto">
+                            <button id="btnCrear" class="btn btn-primary fw-bold">+ Añadir Nuevo Circuito</button>
+                        </div>
+                    </div> -->
 
                     <div id="propSinSeleccion">
                         Herramienta:
@@ -345,14 +447,22 @@
 
                         <div class="mb-2">
                             Tamaño (%):
-                            <input type="range" id="propEscalaInput" min="1" max="300" value="100" class="form-range">
+                            <input type="number" id="propEscalaInput" min="1" max="300" value="100"
+                                class="form-range form-control-color">
                             <small id="propEscala">100%</small>
                         </div>
 
                         <div class="mb-2">
                             Ángulo:
-                            <input type="range" id="propAnguloInput" min="0" max="360" value="0" class="form-range">
+                            <input type="number" id="propAnguloInput" min="0" max="360" value="0"
+                                class="form-range form-control-color">
                             <small id="propAngulo">0°</small>
+                        </div>
+
+                        <div class="mb-2">
+                            Circuito:
+                            <!-- <input type="range" id="propAnguloInput" min="0" max="360" value="0" class="form-range"> -->
+                            <small id="circ"></small>
                         </div>
 
                     </div>
@@ -370,71 +480,304 @@
                 </div>
                 <div class="offcanvas-body small">
 
+                    <div class="col">
 
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">CIRCUITOS</th>
-                                <th scope="col">IUG</th>
-                                <th scope="col">TUG1</th>
-                                <th scope="col">TUG2</th>
-                                <th scope="col">ACU</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <th scope="row">DPMS (VA)</th>
-                                <td> ... </td>
-                                <td> ... </td>
-                                <td> ... </td>
-                                <td> ... </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">TENSION (V)</th>
-                                <td> ... </td>
-                                <td> ... </td>
-                                <td> ... </td>
-                                <td> ... </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Ib (A) Corriente Calculada</th>
-                                <td> ... </td>
-                                <td> ... </td>
-                                <td> ... </td>
-                                <td> ... </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">SECCION L y N (mm2)</th>
-                                <td> ... </td>
-                                <td> ... </td>
-                                <td> ... </td>
-                                <td> ... </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">SECCION DE PE (mm2)</th>
-                                <td> ... </td>
-                                <td> ... </td>
-                                <td> ... </td>
-                                <td> ... </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Iz (A) Corriente Maxima Cable</th>
-                                <td> ... </td>
-                                <td> ... </td>
-                                <td> ... </td>
-                                <td> ... </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">In (A) Corriente PIA</th>
-                                <td> ... </td>
-                                <td> ... </td>
-                                <td> ... </td>
-                                <td> ... </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                        <button id="btnCargarPlano" class=" tool-btn">
+                            <img src="assets/svg/plano.png" width="44">
+                        </button>
 
-                    ...
+                        <input type="file" id="inputPlano" accept="image/*" hidden>
+
+                        <p>PONER ACA LA TENSION NOMINAL, DESPLEGABLE 220V o 380V</p>
+
+                        <div class="btn-group w-100 mb-3">
+
+                            <!-- <input type="radio" class="btn-check" name="modo" id="modoTotal">
+                            <label class="btn btn-outline-primary" for="modoTotal">
+                                Superficie total
+                            </label> -->
+
+                            <input type="radio" class="btn-check" name="modo" id="modoAmbientes">
+                            <label class="btn btn-outline-primary" for="modoAmbientes">
+                                Por ambientes - MEDIDAS
+                            </label>
+
+                        </div>
+
+
+                        <p>SLA y GE</p>
+                        <!-- <p>INGRESAR MEDIDAS POR mts</p>
+                        <p>Superficie cubierta</p>
+
+                        <div id="formUno" class="oculto">
+                            <input type="number" step="any" id="supX" placeholder=" X mts ...">
+                            <!-- <button id="botSupCub" >Modificar y Mostrar</button> 
+
+                            <input type="number" step="any" id="supY" placeholder=" Y mts...">
+
+                            <p>Superficie Semi-Cubierta</p>
+
+                            <input type="number" step="any" id="semiX" placeholder="semi X mts...">
+
+                            <input type="number" step="any" id="semiY" placeholder="semi Y mts...">
+
+                            <button id="sla">Modificar y Mostrar</button>
+                        </div> -->
+
+
+
+
+                        <!-- TOTAL -->
+                        <!-- <div id="panelTotal" class="">
+
+                            <div class="row g-3">
+
+                                <div class="col-12 col-md-6">
+
+                                    <h6>Cubierta</h6>
+
+                                    <input type="number" class="form-control mb-2" placeholder="Largo">
+
+                                    <input type="number" class="form-control" placeholder="Ancho">
+
+                                </div>
+
+                                <div class="col-12 col-md-6">
+
+                                    <h6>Semicubierta</h6>
+
+                                    <input type="number" class="form-control mb-2" placeholder="Largo">
+
+                                    <input type="number" class="form-control" placeholder="Ancho">
+
+                                </div>
+
+                            </div>
+
+                            <button class="btn btn-primary mt-3 w-100" id="btnTotal">
+                                Calcular
+                            </button>
+
+                        </div> -->
+                        <!-- AMBIENTES -->
+                        <div id="panelAmbientes" class="d-none">
+
+                            <div class="row g-2">
+
+                                <div class="col-12 col-md-4">
+                                    <input type="text" class="form-control" placeholder="Ambiente">
+                                </div>
+
+                                <div class="col-6 col-md-2">
+                                    <input type="number" class="form-control" placeholder="Largo">
+                                </div>
+
+                                <div class="col-6 col-md-2">
+                                    <input type="number" class="form-control" placeholder="Ancho">
+                                </div>
+                                <div class="col-6 col-md-2">
+                                    <input type="number" class="form-control" placeholder="MetroCuadrado">
+                                </div>
+
+                                <div class="col-12 col-md-2">
+                                    <select class="form-select">
+                                        <option value="cubierto">Cubierto</option>
+                                        <option value="semi">Semicubierto</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-12 col-md-2">
+                                    <button class="btn btn-success w-100" id="btnAmbiente">
+                                        Agregar
+                                    </button>
+                                </div>
+
+                            </div>
+
+                            <hr>
+
+                            <!-- TABLA RESPONSIVE -->
+                            <div class="table-responsive">
+
+                                <table class="table table-sm table-striped">
+
+                                    <thead>
+
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th>m²</th>
+                                            <!-- <th>m²</th> -->
+                                            <th>Tipo</th>
+                                        </tr>
+
+                                    </thead>
+
+                                    <tbody id="tablaAmbientes"></tbody>
+
+                                </table>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- 2. Elemento de salida -->
+                        <p id="resultado"></p>
+                        <!-- 
+                        <p>INGRESAR MEDIDAS POR mts2</p>
+                        <input type="text" id="ambientes" placeholder="Escribe algo aquí...">
+                        <button id="botAmbiente">Modificar y Mostrar</button>
+
+                       
+                        <p id="resultado"></p> -->
+
+
+
+                    </div>
+
+                    <!-- <div class="col">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">CIRCUITOS</th>
+                                    <th scope="col">IUG</th>
+                                    <th scope="col">TUG1</th>
+                                    <th scope="col">TUG2</th>
+                                    <th scope="col">ACU</th>
+                                    <th scope="col">SECCIONAL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th scope="row">DPMS (VA)</th>
+                                    <td id="tuCuadroDeDatos"> ... </td>
+                                    <td> ... </td>
+                                    <td> ... </td>
+                                    <td> ... </td>
+                                    <td> ... </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">CANTIDAD BOCAS</th>
+                                    <td id="tuCuadroDeDatos"> ... </td>
+                                    <td> ... </td>
+                                    <td> ... </td>
+                                    <td> ... </td>
+                                    <td> ... </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">TENSION (V)</th>
+                                    <td> ... </td>
+                                    <td> ... </td>
+                                    <td> ... </td>
+                                    <td> ... </td>
+                                    <td> ... </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" data-bs-toggle="tooltip" data-bs-placement="right"
+                                        data-bs-custom-class="custom-tooltip" data-bs-title=" Corriente Calculada.">
+                                        Ib (A)</th>
+                                    <td id="corrienteCalculada"> ... </td>
+                                    <td> ... </td>
+                                    <td> ... </td>
+                                    <td> ... </td>
+                                    <td> ... </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">SECCION L y N (mm2)</th>
+                                    <td> ... </td>
+                                    <td> ... </td>
+                                    <td> ... </td>
+                                    <td> ... </td>
+                                    <td> ... </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">SECCION DE PE (mm2)</th>
+                                    <td> ... </td>
+                                    <td> ... </td>
+                                    <td> ... </td>
+                                    <td> ... </td>
+                                    <td> ... </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" data-bs-toggle="tooltip" data-bs-placement="right"
+                                        data-bs-custom-class="custom-tooltip"
+                                        data-bs-title=" Corriente Maxima del Cable.">
+                                        Iz (A)</th>
+                                    <td> ... </td>
+                                    <td> ... </td>
+                                    <td> ... </td>
+                                    <td> ... </td>
+                                    <td> ... </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" data-bs-toggle="tooltip" data-bs-placement="right"
+                                        data-bs-custom-class="custom-tooltip" data-bs-title=" Corriente PIA.">
+                                        In (A)
+                                    </th>
+                                    <td> ... </td>
+                                    <td> ... </td>
+                                    <td> ... </td>
+                                    <td> ... </td>
+                                    <td> ... </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div> -->
+
+
+                    <div class="container-fluid bg-white p-4 rounded shadow-sm">
+                        <h2 class="mb-4 text-primary border-bottom pb-2">Control de Circuitos Eléctricos</h2>
+
+                        <!-- Controles de Selección 
+                        <div class="row g-3 align-items-center mb-4">
+                            <div class="col-auto">
+                                <label for="selectorCircuitos" class="form-label fw-bold m-0">Tipo de circuito:</label>
+                            </div>
+                            <div class="col-auto">
+                                <select id="selectorCircuitos" class="form-select">
+                                    <option value="" disabled selected>-- Seleccione --</option>
+                                    <option value="IUG">IUG</option>
+                                    <option value="TUG">TUG</option>
+                                    <option value="ACU">ACU</option>
+                                </select>
+                            </div>
+                            <div class="col-auto">
+                                <button id="btnCrear" class="btn btn-primary fw-bold">+ Añadir Circuito</button>
+                            </div>
+                        </div> -->
+
+                        <!-- 1. CONTENEDOR FLEXIBLE: Las clases d-flex, overflow-x-auto y gap-3 hacen toda la magia del ordenamiento -->
+                        <div class="d-flex overflow-x-auto gap-3 pb-3" id="contenedorModulos"
+                            style="scroll-behavior: smooth;">
+
+                            <!-- COLUMNA FIJA DE REFERENCIA (ETIQUETAS) -->
+                            <div class="card flex-shrink-0" style="width: 160px;">
+                                <div class="card-header bg-secondary text-white fw-bold text-center">Propiedad</div>
+                                <ul class="list-group list-group-flush text-secondary fw-semibold">
+                                    <li class="list-group-item text-center py-2">Tipo</li>
+                                    <li class="list-group-item text-center py-2">Tensión</li>
+                                    <li class="list-group-item text-center py-2">Bocas</li>
+                                    <li class="list-group-item text-center py-2">DPMS</li>
+                                    <li class="list-group-item text-center py-2">Ib</li>
+                                    <li class="list-group-item text-center py-2">Secc. L/N</li>
+                                    <li class="list-group-item text-center py-2">Secc. PE</li>
+                                    <li class="list-group-item text-center py-2">Iz</li>
+                                    <li class="list-group-item text-center py-2">In</li>
+                                </ul>
+                            </div>
+
+                            <!-- Acá abajo JavaScript inyectará las tarjetas de tus circuitos de forma horizontal -->
+
+                        </div>
+                    </div>
+
+
+
+
+
+
+
                 </div>
             </div>
 
@@ -453,12 +796,11 @@
     <!-- ===================================================== -->
     <!-- APP                                                  -->
     <!-- ===================================================== -->
-
+    
+    <script src="js/app.js" type="module"></script>
+    
+    <script src="js/pruebas.js" type="module"></script>
     <script src="js/simbolos.js"></script>
-
-
-    <script src="js/app.js"></script>
-
 </body>
 
 </html>

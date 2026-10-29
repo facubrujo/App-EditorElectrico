@@ -120,10 +120,6 @@ const SVG_FAN = `
 // CREA UNA BOCA DE ILUMINACIÓN
 // =====================================================
 
-function crearBocaSVG(x, y) {
-
-    return crearSVG(SVG_BOCA, x, y, 0.08);
-}
 
 function crearSVG(svgString, x, y, scale = 0.2) {
 

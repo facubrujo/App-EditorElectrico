@@ -473,3 +473,27 @@ html, body {
         height: auto;
     }
 }
+
+.form-control {
+
+    background-color: #ffffff00 ; 
+    border: var(--bs-border-width) solid #dee2e600;
+
+}
+
+
+.oculto{
+    display: none !important;
+}
+
+.form-control{
+    background-color: #83838345;
+}
+
+.form-range {
+    background-color: #ffffff;
+}
+
+.offcanvas.offcanvas-bottom{
+    height: auto;
+}

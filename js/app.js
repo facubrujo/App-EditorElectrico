@@ -1,5 +1,8 @@
 //APP.JS NUEVO DESDE CERO //
 
+import { listaDeCircuitos } from './pruebas.js';
+import { circuitoActivo } from './pruebas.js';
+
 //let tool = "boca";
 
 const TOOL = {
@@ -55,7 +58,7 @@ let isTyping = false;
 // ==============================
 // CANVAS BASE
 // ==============================
-const canvas = new fabric.Canvas("canvasPlano", {
+export const canvas = new fabric.Canvas("canvasPlano", {
     width: window.innerWidth,//- 200,
     height: window.innerHeight,
     selection: false
@@ -100,9 +103,6 @@ inputPlano.addEventListener("change", function (e) {
         fabric.Image.fromURL(f.target.result, function (img) {
 
             // ajustar escala al canvas
-            // const scaleX = canvas.getWidth() / img.width;
-            // const scaleY = canvas.getHeight() / img.height;
-            // const scale = Math.min(scaleX, scaleY);
 
             canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas), {
                 scaleX: 1,// scale,
@@ -110,7 +110,7 @@ inputPlano.addEventListener("change", function (e) {
                 originX: "left",
                 originY: "top"
             });
-            
+
 
         });
 
@@ -320,11 +320,6 @@ document.getElementById("toolSwitch2").onclick = () => {
     console.log("🔘 SWITCH 2 activado");
 };
 
-// document.getElementById("toolSwitchCombo").onclick = () => {
-//     tool = "switchCombo";
-//     actualizarCursor();
-//     console.log("🔘 SWITCH COMBO activado");
-// };
 
 // =====================================================
 // VENTILADOR
@@ -357,8 +352,6 @@ function aplicarColor(obj, color) {
         stroke: color
     });
 
-    // ❌ NUNCA tocar fill del grupo completo
-    // obj.set({ fill: color });  ← ESTO ES EL ERROR
 
     // 🔥 recorrer SVG interno
     if (obj._objects) {
@@ -369,12 +362,8 @@ function aplicarColor(obj, color) {
                 stroke: color
             });
 
-            // 🚨 SOLO permitir fill si es explícitamente necesario
-            // pero por defecto lo neutralizamos
-            //if (o.fill && o.fill !== "none") {
-            //if (!o.fill || o.fill === "none") {
+
             o.set({
-                // fill: o.fill   // mantener original
                 fill: "white"
             });
             //}
@@ -393,18 +382,20 @@ async function crearSimbolo(x, y, tipo) {
         // BOCA TECHO
         // ======================
         case TOOL.BOCA:
-            obj = await crearBocaSVG(x, y);
+            obj = await crearSVG(SVG_BOCA, x, y, 0.10);
             obj.nombre = "Boca de techo";
             obj.icono = "💡";
+            obj.circ = circuitoActivo;
             break;
 
         // ======================
         // BOCA PARED
         // ======================
         case TOOL.BOCA_PARED:
-            obj = await crearSVG(SVG_BOCA_PARED, x, y, 0.15);
+            obj = await crearSVG(SVG_BOCA_PARED, x, y, 0.10);
             obj.nombre = "Boca de pared";
             obj.icono = "💡";
+            obj.circ = circuitoActivo;
             break;
 
         // ======================
@@ -414,6 +405,7 @@ async function crearSimbolo(x, y, tipo) {
             obj = await crearSVG(SVG_TOMA, x, y, 0.15);
             obj.nombre = "Tomacorriente";
             obj.icono = "🔌";
+            obj.circ = circuitoActivo;
             break;
 
         // ======================
@@ -459,6 +451,7 @@ async function crearSimbolo(x, y, tipo) {
             obj = await crearSVG(SVG_FAN, x, y, 0.15);
             obj.nombre = "Ventilador";
             obj.icono = "🌀";
+            obj.circ = circuitoActivo;
             break;
 
         default:
@@ -624,7 +617,7 @@ canvas.on("mouse:down", async function (opt) {
         }
 
         // CLICK 2 → B
-    
+
         if (cableStep === 1) {
 
             cableEnd = pointer;
@@ -634,7 +627,7 @@ canvas.on("mouse:down", async function (opt) {
         }
 
         // CLICK 3 → fijar curva
-        
+
         if (cableStep === 2) {
 
             cableControl = pointer;
@@ -671,6 +664,7 @@ canvas.on("mouse:down", async function (opt) {
     // =====================
     await crearSimbolo(pointer.x, pointer.y, tool);
     actualizarContadores();
+
 });
 
 
@@ -783,11 +777,34 @@ function actualizarContadores() {
     const tomas = objs.filter(o => o.tipo === "toma").length;
     const tableros = objs.filter(o => o.tipo?.includes("tablero")).length;
     const cables = objs.filter(o => o.stroke && !o.tipo).length;
+    const iug = objs.filter(o => o.circ === "IUG").length;
 
     document.getElementById("countBocas").textContent = bocas;
     document.getElementById("countTomas").textContent = tomas;
     document.getElementById("countTableros").textContent = tableros;
     document.getElementById("countCables").textContent = cables;
+
+    console.log(`bocas IUG   ${iug}  `);
+    console.log(`bocas TOTAL ${bocas}  `);
+
+    document.getElementById("bocasIUG").textContent = iug;
+
+    // --- AGREGA ESTO AL FINAL DE LA FUNCIÓN ---
+    // Creamos el evento personalizado y le metemos el dato de las bocas
+    const eventoBocas = new CustomEvent("cambioBocas", { detail: bocas });
+    // Lo despachamos al documento para que cualquiera lo escuche
+    document.dispatchEvent(eventoBocas);
+}
+
+function obtenerCantidadPorCircuito(nombreCircuito) {
+    // 1. Obtenemos la lista con todos los objetos del canvas
+    const todosLosObjetos = canvas.getObjects();
+
+    // 2. Filtramos la lista buscando los que tengan la propiedad .circ igual al nombre que pasamos
+    const objetosDelCircuito = todosLosObjetos.filter(obj => obj.circ === nombreCircuito);
+
+    // 3. Devolvemos la cantidad (el largo del arreglo filtrado)
+    return objetosDelCircuito.length;
 }
 
 // Panel de propiedades
@@ -946,10 +963,11 @@ function mostrarPropiedades(obj) {
     document.getElementById("propAnguloInput").value = angulo;
     document.getElementById("propAngulo").textContent = angulo + "°";
 
+    let circuito = obj.circ;
+    document.getElementById("circ").textContent = circuito + "°";
+
     console.log("MOSTRANDO PROPIEDADES", obj);
-    // if (inputColor) inputColor.value = obj.stroke || "#000000";
-    // if (inputEscala) inputEscala.value = Math.round((obj.scaleX || 1) * 100);
-    // if (inputAngulo) inputAngulo.value = Math.round(obj.angle || 0);
+
 }
 
 
@@ -986,11 +1004,6 @@ inputColor?.addEventListener("input", function (e) {
             o.set({ stroke: color });
         });
     }
-
-    // // si tiene fill interno (SVG o texto)
-    // if (objetoSeleccionado.set) {
-    //     objetoSeleccionado.set({ fill: color });
-    // }
 
     canvas.requestRenderAll();
 });
@@ -1052,7 +1065,10 @@ canvas.on("selection:cleared", function () {
 const btnElectricos = document.getElementById("btnElectricos");
 const menuElectricos = document.getElementById("menuElectricos");
 
-btnElectricos.addEventListener("click", function(e){
+//const btnCircuitos = document.getElementById("btnCircuitos");
+//const menuCircuitos = document.getElementById("menuCircuitos");
+
+btnElectricos.addEventListener("click", function (e) {
 
     e.stopPropagation();
 
@@ -1062,7 +1078,7 @@ btnElectricos.addEventListener("click", function(e){
 
 // cerrar al hacer click fuera
 
-document.addEventListener("click", function(){
+document.addEventListener("click", function () {
 
     menuElectricos.classList.remove("show");
 
@@ -1070,15 +1086,15 @@ document.addEventListener("click", function(){
 
 // impedir que se cierre al pulsar dentro
 
-menuElectricos.addEventListener("click", function(e){
+menuElectricos.addEventListener("click", function (e) {
 
     e.stopPropagation();
 
 });
 
-menuElectricos.querySelectorAll("button").forEach(btn=>{
+menuElectricos.querySelectorAll("button").forEach(btn => {
 
-    btn.addEventListener("click",function(){
+    btn.addEventListener("click", function () {
 
         menuElectricos.classList.remove("show");
 
@@ -1165,3 +1181,4 @@ canvas.upperCanvasEl.addEventListener("touchmove", function (e) {
 canvas.upperCanvasEl.addEventListener("touchend", function () {
     isDragging = false;
 });
+
