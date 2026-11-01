@@ -1,4 +1,4 @@
-//APP.JS NUEVO DESDE CERO //
+
 
 import { listaDeCircuitos } from './pruebas.js';
 import { circuitoActivo } from './pruebas.js';
@@ -48,6 +48,10 @@ let cablePreview = null;
 // ---- COLOR -----
 let colorActual = "#000000";
 
+// Variable global para el estilo del cable seleccionado en la UI
+let tipoCableActual = "liso"; // Puede ser: "liso" o "rayas"
+
+
 
 // ---- TEXTO  -----
 let fuenteTexto = "Arial";
@@ -74,6 +78,9 @@ const LAYERS = {
 const inputColor = document.getElementById("propColorInput");
 const inputEscala = document.getElementById("propEscalaInput");
 const inputAngulo = document.getElementById("propAnguloInput");
+
+const inputTrazo = document.getElementById("propTrazoInput"); // 👈 Agregado
+const grupoTrazo = document.getElementById("propGrupoTrazo"); // 👈 Agregado
 
 // ==============================
 // ELEMENTOS DOM
@@ -648,11 +655,28 @@ canvas.on("mouse:down", async function (opt) {
                 evented: false
             });
 
+            // ==========================================
+            // 🔥 LE INYECTAMOS LA IDENTIDAD (METADATOS)
+            // ==========================================
+            finalPath.tipo = TOOL.CABLE;            // Así ya tiene un .tipo ("cable") igual que los símbolos
+            finalPath.nombre = "Cable Eléctrico";   // Su nombre legible
+            finalPath.icono = "🔌";                  // Su ícono para el panel de propiedades
+            finalPath.circ = circuitoActivo;        // Lo vinculás al circuito eléctrico actual, ¡clave para planos!
+
+            finalPath.tipoCable = tipoCableActual; // 👈 Guardamos si nació "liso" o "rayas"
+            finalPath.strokeDashArray = obtenerConfiguracionTrazo(tipoCableActual); // 👈 Aplicamos el trazo inicial
+
+
+
+
             canvas.add(finalPath);
             ordenarCapas();
 
             cablePreview = null;
             cableStep = 0;
+
+            // Actualizamos contadores inmediatamente
+            actualizarContadores();
 
             return;
         }
@@ -696,7 +720,8 @@ canvas.on("mouse:move", function (opt) {
         strokeWidth: 2,
         selectable: false,
         evented: false,
-        opacity: 0.5
+        opacity: 0.5,
+        strokeDashArray: obtenerConfiguracionTrazo(tipoCableActual) // 👈 Agregado
     });
 
     canvas.insertAt(cablePreview, LAYERS.CABLES);
@@ -917,30 +942,57 @@ window.addEventListener("keydown", function (e) {
 });
 
 
+// function ordenarCapas() {
+
+//     const objects = canvas.getObjects();
+
+//     objects.forEach(obj => {
+
+//         // no tocar background
+//         if (obj === canvas.backgroundImage) return;
+
+//         // cables abajo
+//         if (obj.stroke && !obj.tipo) {
+//             canvas.sendToBack(obj);
+//         }
+//     });
+
+//     // y asegurar símbolos arriba de cables
+//     objects.forEach(obj => {
+
+//         if (obj.tipo) {
+//             canvas.bringToFront(obj);
+//         }
+//     });
+
+// }
+
 function ordenarCapas() {
 
     const objects = canvas.getObjects();
 
+    // 1. Mandamos TODOS los cables abajo (justo por encima del fondo)
     objects.forEach(obj => {
-
-        // no tocar background
+        // no tocar el plano de fondo
         if (obj === canvas.backgroundImage) return;
 
-        // cables abajo
-        if (obj.stroke && !obj.tipo) {
+        // Si es un cable (por su tipo o por descarte), va al fondo
+        if (obj.tipo === TOOL.CABLE || (obj.stroke && !obj.tipo)) {
             canvas.sendToBack(obj);
         }
     });
 
-    // y asegurar símbolos arriba de cables
+    // 2. Aseguramos que los símbolos y textos se mantengan siempre arriba de los cables
     objects.forEach(obj => {
-
-        if (obj.tipo) {
+        if (obj.tipo && obj.tipo !== TOOL.CABLE) {
             canvas.bringToFront(obj);
         }
     });
 
+    // Forzamos el rediseño para aplicar el orden visual de inmediato
+    canvas.requestRenderAll();
 }
+
 
 // propiedades de objetos
 
@@ -966,10 +1018,29 @@ function mostrarPropiedades(obj) {
     let circuito = obj.circ;
     document.getElementById("circ").textContent = circuito + "°";
 
+
+    // 🔥 CONTROL DE VISIBILIDAD DEL TRAZO
+    if (obj.tipo === TOOL.CABLE) {
+        grupoTrazo.style.display = "block"; // Se muestra si es cable
+        inputTrazo.value = obj.tipoCable || "liso"; // Setea el valor actual del cable en el select
+    } else {
+        grupoTrazo.style.display = "none";  // Se oculta si es un SVG de un símbolo
+    }
+
+
+
     console.log("MOSTRANDO PROPIEDADES", obj);
 
 }
 
+
+// Función auxiliar para obtener el strokeDashArray según el tipo de trazo
+function obtenerConfiguracionTrazo(tipo) {
+    if (tipo === "rayas") {
+        return new Array(10,5); // 10px dibujados, 5px de espacio
+    }
+    return null; // Línea lisa normal
+}
 
 
 let objetoSeleccionado = null;
@@ -1037,6 +1108,47 @@ inputAngulo?.addEventListener("input", function (e) {
 
     canvas.requestRenderAll();
     mostrarPropiedades(objetoSeleccionado);
+});
+
+
+
+// // Agregá este listener al final junto a tus otros event listeners de inputs
+// inputTrazo?.addEventListener("change", function (e) {
+//     if (!objetoSeleccionado || objetoSeleccionado.tipo !== TOOL.CABLE) return;
+
+//     const nuevoTipo = e.target.value; // "liso" o "rayas"
+
+//     // Guardamos la propiedad personalizada y actualizamos el diseño en Fabric.js
+//     objetoSeleccionado.tipoCable = nuevoTipo;
+//     objetoSeleccionado.set({
+//         strokeDashArray: obtenerConfiguracionTrazo(nuevoTipo)
+//     });
+
+//     // Obligamos al canvas a redibujar el cambio inmediatamente
+//     canvas.requestRenderAll();
+// });
+// 🔥 CAMBIO DE TRAZO CORREGIDO PARA FORZAR EL REDISEÑO
+inputTrazo?.addEventListener("change", function (e) {
+    if (!objetoSeleccionado || objetoSeleccionado.tipo !== TOOL.CABLE) return;
+
+    const nuevoTipo = e.target.value; // "liso" o "rayas"
+
+    // 1. Guardamos el estado personalizado
+    objetoSeleccionado.tipoCable = nuevoTipo;
+
+    // 2. Modificamos el strokeDashArray y obligamos al objeto a marcarse como "sucio"
+    objetoSeleccionado.set({
+        strokeDashArray: obtenerConfiguracionTrazo(nuevoTipo),
+        dirty: true // 👈 LE RECUERDA A FABRIC.JS QUE DEBE VOLVER A GENERAR ESTE VECTOR
+    });
+
+    // 3. Recalculamos las coordenadas de control del objeto
+    objetoSeleccionado.setCoords(); 
+
+    // 4. Forzamos el renderizado total de la pantalla
+    canvas.requestRenderAll();
+    
+    console.log("Trazo del cable actualizado y forzado a:", nuevoTipo);
 });
 
 
