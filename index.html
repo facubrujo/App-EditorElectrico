@@ -44,6 +44,62 @@
             <div class="editor-title fw-bold">
                 Editor Eléctrico
             </div>
+
+
+            <!-- <div id="propSeleccion" style="display:none">
+
+                <div>
+                    <span id="propIcono">💡</span>
+                    <strong id="propNombre">Boca</strong>
+                </div>
+
+                <hr>
+
+                <div class="mb-2">
+                    Color:
+                    <input type="color" id="propColorInput" class="form-control form-control-color w-100">
+                </div>
+
+                <div class="mb-2">
+                    Tamaño (%):
+                    <input type="number" id="propEscalaInput" min="1" max="300" value="100"
+                        class="form-range form-control-color">
+                    <small id="propEscala">100%</small>
+                </div>
+
+                <div class="mb-2">
+                    Ángulo:
+                    <input type="number" id="propAnguloInput" min="0" max="360" value="0"
+                        class="form-range form-control-color">
+                    <small id="propAngulo">0°</small>
+                </div>
+
+                <div class="mb-2">
+                    Circuito:
+                    <small id="circ"></small>
+                </div>
+
+                <div id="propGrupoTrazo" style="display: none; margin-top: 10px;">
+                    <label for="propTrazoInput" style="display: block; font-weight: bold; margin-bottom: 5px;">Tipo de
+                        Trazo:</label>
+                    <select id="propTrazoInput"
+                        style="width: 100%; padding: 5px; border-radius: 4px; border: 1px solid #ccc;">
+                        <option value="liso">Línea Continua (Normal)</option>
+                        <option value="rayas">Línea Segmentada (Rayas)</option>
+                    </select>
+                </div>
+
+
+            </div> -->
+
+
+
+
+
+
+
+
+
             <!-- <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom"
                 aria-controls="offcanvasBottom">Proyecto Vivienda Datos
             </button> -->
@@ -62,10 +118,10 @@
             </button> -->
 
 
-            <div class="row g-3 align-items-center mb-1">
-                <div class="col-auto">
-                    <!-- <label for="selectorCircuitos" class="form-label fw-bold m-0">Circuito:</label> -->
-                </div>
+            <!-- <div class="row g-3 align-items-center mb-1">
+                <div class="col-auto"> -->
+            <!-- <label for="selectorCircuitos" class="form-label fw-bold m-0">Circuito:</label> -->
+            <!-- </div>
                 <div class="col-auto">
                     <select id="selectorCircuitos" class="form-select">
                         <option value="" disabled selected>-- Circuito --</option>
@@ -88,7 +144,7 @@
                     <button id="btnEliminarActivo" class="btn btn-danger">-</button>
                 </div>
 
-            </div>
+            </div> -->
 
 
             <!-- CONTENEDOR DE LOS BOTONES DINÁMICOS -->
@@ -110,11 +166,11 @@
         <!-- TOOLBAR FLOTANTE -->
         <div id="toolbar" class="excal-toolbar shadow-sm">
 
-            <!-- <button id="btnCargarPlano" class=" tool-btn">
+            <button id="btnCargarPlano" class=" tool-btn">
                 <img src="assets/svg/plano.png" width="44">
             </button>
 
-            <input type="file" id="inputPlano" accept="image/*" hidden> -->
+            <input type="file" id="inputPlano" accept="image/*" hidden>
 
 
             <div class="tool-group">
@@ -375,11 +431,47 @@
                 <div class="mb-3 p-2 bg-dark text-white rounded">
 
                     <h6 class="mb-2">Información del proyecto</h6>
+
+
+                    <div class="row g-3 align-items-center mb-1">
+                        <div class="col-auto">
+                            <!-- <label for="selectorCircuitos" class="form-label fw-bold m-0">Circuito:</label> -->
+                        </div>
+                        <div class="col-auto">
+                            <select id="selectorCircuitos" class="form-select">
+                                <option value="" disabled selected>-- Circuito --</option>
+                                <option value="IUG">IUG</option>
+                                <option value="IUE">IUE</option>
+                                <option value="TUG">TUG</option>
+                                <option value="TUE">TUE</option>
+                                <option value="ACU">ACU</option>
+                                <option value="MBTF">MBTF</option>
+                                <option value="MBTS">MBTS</option>
+                                <option value="APM">APM</option>
+                                <option value="ATE">ATE</option>
+                                <option value="ITE">ITE</option>
+                                <option value="OCE">OCE</option>
+                                <option value="SECCIONAL">SECCIONAL</option>
+                            </select>
+                        </div>
+                        <div class="col-auto">
+                            <button id="btnCrear" class="btn btn-primary fw-bold">+</button>
+                            <button id="btnEliminarActivo" class="btn btn-danger">-</button>
+                        </div>
+
+                    </div>
+
+
+
+
+
                     <!-- Botón para disparar la exportación -->
-                    <button id="btnExportarPDF" class="btn btn-primary mt-3 mb-3" type="button"
-                        >
+                    <button id="btnExportarPDF" class="btn btn-primary mt-3 mb-3" type="button">
                         📄 Exportar Plano a JPG
                     </button>
+
+
+
 
 
 
@@ -388,10 +480,62 @@
                         Bocas: <strong id="countBocas">0</strong><br>
                         Tomas: <strong id="countTomas">0</strong><br>
                         Tableros: <strong id="countTableros">0</strong><br>
-                        Cables: <strong id="countCables">0</strong>
+                        <!-- Cables: <strong id="countCables">0</strong>
                         Circuito: <strong id="circuitosCreados">0</strong>
-                        BIUG: <strong id="bocasIUG">0</strong>
+                        BIUG: <strong id="bocasIUG">0</strong> -->
                     </div>
+
+
+                    <div id="propSeleccion"  style="display:none">
+
+                        <div>
+                            <span id="propIcono">💡</span>
+                            <strong id="propNombre">Boca</strong>
+                        </div>
+
+                        <hr>
+
+                        <div class="mb-2">
+                            Color:
+                            <input type="color" id="propColorInput" class="form-control form-control-color w-100">
+                        </div>
+
+                        <div class="mb-2">
+                            Tamaño (%):
+                            <input type="number" id="propEscalaInput" min="1" max="300" value="100"
+                                class="form-range form-control-color">
+                            <!-- <small id="propEscala">100%</small> -->
+                        </div>
+
+                        <div class="mb-2">
+                            Ángulo:
+                            <input type="number" id="propAnguloInput" min="0" max="360" value="0"
+                                class="form-range form-control-color">
+                            <!-- <small id="propAngulo">0°</small> -->
+                        </div>
+
+                        <div class="mb-2">
+                            Circuito:
+                            <!-- <input type="range" id="propAnguloInput" min="0" max="360" value="0" class="form-range"> -->
+                            <small id="circ"></small>
+                        </div>
+
+                        <!-- Dentro de #propSeleccion, abajo de los otros inputs -->
+                        <div id="propGrupoTrazo" style="display: none; margin-top: 10px;">
+                            <!-- <div id="propGrupoTrazo" style="margin-top: 10px;"> -->
+                            <label for="propTrazoInput"
+                                style="display: block; font-weight: bold; margin-bottom: 5px;">Tipo de Trazo:</label>
+                            <select id="propTrazoInput"
+                                style="width: 100%; padding: 5px; border-radius: 4px; border: 1px solid #ccc;">
+                                <option value="liso">___________</option>
+                                <option value="rayas">- - - - - - - - - - </option>
+                            </select>
+                        </div>
+
+
+                    </div>
+
+
 
 
                 </div>
@@ -433,54 +577,15 @@
                         <span id="toolActivo">Seleccionar</span>
                     </div>
 
-                    <div id="propSeleccion" style="display:none">
-
-                        <div>
-                            <span id="propIcono">💡</span>
-                            <strong id="propNombre">Boca</strong>
-                        </div>
-
-                        <hr>
-
-                        <div class="mb-2">
-                            Color:
-                            <input type="color" id="propColorInput" class="form-control form-control-color w-100">
-                        </div>
-
-                        <div class="mb-2">
-                            Tamaño (%):
-                            <input type="number" id="propEscalaInput" min="1" max="300" value="100"
-                                class="form-range form-control-color">
-                            <small id="propEscala">100%</small>
-                        </div>
-
-                        <div class="mb-2">
-                            Ángulo:
-                            <input type="number" id="propAnguloInput" min="0" max="360" value="0"
-                                class="form-range form-control-color">
-                            <small id="propAngulo">0°</small>
-                        </div>
-
-                        <div class="mb-2">
-                            Circuito:
-                            <!-- <input type="range" id="propAnguloInput" min="0" max="360" value="0" class="form-range"> -->
-                            <small id="circ"></small>
-                        </div>
-
-                        <!-- Dentro de #propSeleccion, abajo de los otros inputs -->
-                        <div id="propGrupoTrazo" style="display: none; margin-top: 10px;">
-                        <!-- <div id="propGrupoTrazo" style="margin-top: 10px;"> -->
-                            <label for="propTrazoInput"
-                                style="display: block; font-weight: bold; margin-bottom: 5px;">Tipo de Trazo:</label>
-                            <select id="propTrazoInput"
-                                style="width: 100%; padding: 5px; border-radius: 4px; border: 1px solid #ccc;">
-                                <option value="liso">Línea Continua (Normal)</option>
-                                <option value="rayas">Línea Segmentada (Rayas)</option>
-                            </select>
-                        </div>
+                    
 
 
-                    </div>
+
+
+
+
+
+
                 </div>
 
             </aside>
@@ -497,11 +602,11 @@
 
                     <div class="col">
 
-                        <button id="btnCargarPlano" class=" tool-btn">
+                        <!-- <button id="btnCargarPlano" class=" tool-btn">
                             <img src="assets/svg/plano.png" width="44">
                         </button>
 
-                        <input type="file" id="inputPlano" accept="image/*" hidden>
+                        <input type="file" id="inputPlano" accept="image/*" hidden> -->
 
                         <p>PONER ACA LA TENSION NOMINAL, DESPLEGABLE 220V o 380V</p>
 
@@ -804,7 +909,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 
 
-<!-- 
+    <!-- 
     <script type="module" src="https://cdn.jsdelivr.net/npm/bootstrap@6.0.0-alpha.1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-1a/pXj49ZQ1aHEmrJ+gMw1otqoVsYwlEnlD8mIfY2TV03r20Y0CN7uqx1tQogjPL"
         crossorigin="anonymous"></script> -->

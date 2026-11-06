@@ -146,7 +146,7 @@ function calcularBocas() {
     let dpmsIUG = 0;
     let ibIUG = 0;
     objs.forEach(objeto => {
-      if(objeto.circ === "IUG"){
+      if(objeto.circ === "IUG" && objeto.tipo === "bocaPared" || objeto.circ === "IUG" && objeto.tipo === "boca" ){
         bocas++;
       };
       

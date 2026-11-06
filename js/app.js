@@ -807,12 +807,12 @@ function actualizarContadores() {
     document.getElementById("countBocas").textContent = bocas;
     document.getElementById("countTomas").textContent = tomas;
     document.getElementById("countTableros").textContent = tableros;
-    document.getElementById("countCables").textContent = cables;
+    // document.getElementById("countCables").textContent = cables;
 
     console.log(`bocas IUG   ${iug}  `);
     console.log(`bocas TOTAL ${bocas}  `);
 
-    document.getElementById("bocasIUG").textContent = iug;
+    // document.getElementById("bocasIUG").textContent = iug;
 
     // --- AGREGA ESTO AL FINAL DE LA FUNCIÓN ---
     // Creamos el evento personalizado y le metemos el dato de las bocas
@@ -1009,11 +1009,11 @@ function mostrarPropiedades(obj) {
 
     const escala = Math.round((obj.scaleX || 1) * 100);
     document.getElementById("propEscalaInput").value = escala;
-    document.getElementById("propEscala").textContent = escala + "%";
+    // document.getElementById("propEscala").textContent = escala + "%";
 
     const angulo = Math.round(obj.angle || 0);
     document.getElementById("propAnguloInput").value = angulo;
-    document.getElementById("propAngulo").textContent = angulo + "°";
+    // document.getElementById("propAngulo").textContent = angulo + "°";
 
     let circuito = obj.circ;
     document.getElementById("circ").textContent = circuito + "°";
@@ -1294,3 +1294,8 @@ canvas.upperCanvasEl.addEventListener("touchend", function () {
     isDragging = false;
 });
 
+//COSAS PARA HACER... 
+//CAMBIAR ESTRUCTURA A MVC + POO
+// TAMAÑO LETRAS Y COLOR UNIVERSAL
+// ACCESOS DE TECLADO EN BARRA DE HERRAMIENTAS
+// ALGUNA FORMA DE GUARDADO DE PLANOS MODIFICADOS PARA VOLVER A MODIFICARLOS EN UN FUTURO
