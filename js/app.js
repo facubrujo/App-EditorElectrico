@@ -565,6 +565,10 @@ canvas.on("mouse:down", async function (opt) {
 
         texto.on("editing:exited", function () {
 
+            // Dentro de texto.on("editing:exited", function () { ... })
+            tamanioTexto = Math.round(texto.fontSize * texto.scaleX);
+
+
             isTyping = false;
 
             const contenido = texto.text.trim();
@@ -690,6 +694,20 @@ canvas.on("mouse:down", async function (opt) {
     actualizarContadores();
 
 });
+
+// guarda y recuerda el tamaño del texto una vez que se cambia
+document.getElementById("propEscalaInput")?.addEventListener("input", (e) => {
+    const nuevoTamanio = parseInt(e.target.value, 10);
+    if (isNaN(nuevoTamanio) || nuevoTamanio <= 0) return;
+
+    tamanioTexto = nuevoTamanio; // Lo guarda para los próximos textos
+
+    if (objetoSeleccionado && objetoSeleccionado.tipo === "texto") {
+        objetoSeleccionado.set({ fontSize: nuevoTamanio, scaleX: 1, scaleY: 1 });
+        canvas.requestRenderAll();
+    }
+});
+
 
 
 canvas.on("mouse:move", function (opt) {
@@ -1037,7 +1055,7 @@ function mostrarPropiedades(obj) {
 // Función auxiliar para obtener el strokeDashArray según el tipo de trazo
 function obtenerConfiguracionTrazo(tipo) {
     if (tipo === "rayas") {
-        return new Array(10,5); // 10px dibujados, 5px de espacio
+        return new Array(10, 5); // 10px dibujados, 5px de espacio
     }
     return null; // Línea lisa normal
 }
@@ -1143,11 +1161,11 @@ inputTrazo?.addEventListener("change", function (e) {
     });
 
     // 3. Recalculamos las coordenadas de control del objeto
-    objetoSeleccionado.setCoords(); 
+    objetoSeleccionado.setCoords();
 
     // 4. Forzamos el renderizado total de la pantalla
     canvas.requestRenderAll();
-    
+
     console.log("Trazo del cable actualizado y forzado a:", nuevoTipo);
 });
 
@@ -1294,7 +1312,122 @@ canvas.upperCanvasEl.addEventListener("touchend", function () {
     isDragging = false;
 });
 
-//COSAS PARA HACER... 
+// copiar pegar y deshacer
+
+let portapapeles = null;
+const PROPIEDADES_CUSTOM = ["tipo", "nombre", "icono", "circ", "tipoCable"];
+
+window.addEventListener("keydown", function (e) {
+    // Evitar activar atajos si el usuario está escribiendo dentro de un texto o input
+    if (isTyping || e.target.tagName === "INPUT") return;
+
+    // COPIAR (Ctrl + C)
+    if (e.ctrlKey && e.key.toLowerCase() === "c") {
+        const activo = canvas.getActiveObject();
+        if (!activo) return;
+
+        activo.clone(function (clonado) {
+            portapapeles = clonado;
+        }, PROPIEDADES_CUSTOM);
+    }
+
+    // PEGAR (Ctrl + V)
+    if (e.ctrlKey && e.key.toLowerCase() === "v") {
+        if (!portapapeles) return;
+
+        portapapeles.clone(function (objetoPegado) {
+            canvas.discardActiveObject();
+
+            // Desplazar un poco para que no quede exactamente encima del original
+            objetoPegado.set({
+                left: objetoPegado.left + 20,
+                top: objetoPegado.top + 20,
+                evented: true,
+                selectable: true
+            });
+
+            // Si se copió una selección múltiple
+            if (objetoPegado.type === "activeSelection") {
+                objetoPegado.canvas = canvas;
+                objetoPegado.forEachObject(function (obj) {
+                    canvas.add(obj);
+                });
+                objetoPegado.setCoords();
+            } else {
+                canvas.add(objetoPegado);
+            }
+
+            // Actualizar referencia del portapapeles para pegados sucesivos en cascada
+            portapapeles.top += 20;
+            portapapeles.left += 20;
+
+            canvas.setActiveObject(objetoPegado);
+            ordenarCapas();
+            actualizarContadores();
+            canvas.requestRenderAll();
+        }, PROPIEDADES_CUSTOM);
+    }
+});
+
+
+
+
+let historial = [];
+let bloqueandoHistorial = false;
+
+function guardarEstado() {
+    if (bloqueandoHistorial) return;
+    // Guardamos el JSON incluyendo tus propiedades personalizadas
+    const json = JSON.stringify(canvas.toJSON(PROPIEDADES_CUSTOM));
+    historial.push(json);
+    
+    // Limitar a los últimos 30 pasos para no consumir mucha memoria
+    if (historial.length > 30) historial.shift();
+}
+
+function deshacer() {
+    if (historial.length <= 1) return; // Siempre dejamos el estado inicial
+
+    bloqueandoHistorial = true;
+    historial.pop(); // Sacamos el estado actual
+    const estadoAnterior = historial[historial.length - 1];
+
+    canvas.loadFromJSON(estadoAnterior, function () {
+        ordenarCapas();
+        actualizarContadores();
+        canvas.requestRenderAll();
+        bloqueandoHistorial = false;
+    });
+}
+
+// Escuchar cambios automáticos en el canvas para guardar historial
+canvas.on("object:added", (e) => {
+    // Ignorar la línea de vista previa mientras se dibuja un cable
+    if (e.target === cablePreview) return; 
+    guardarEstado();
+});
+canvas.on("object:modified", guardarEstado);
+canvas.on("object:removed", (e) => {
+    if (e.target === cablePreview) return;
+    guardarEstado();
+});
+
+// Guardar estado inicial vacío al arrancar
+guardarEstado();
+
+// Agregar el atajo Ctrl + Z al listener de teclado
+window.addEventListener("keydown", function (e) {
+    if (isTyping || e.target.tagName === "INPUT") return;
+
+    if (e.ctrlKey && e.key.toLowerCase() === "z") {
+        e.preventDefault();
+        deshacer();
+    }
+});
+
+
+
+//COSAS PARA HACER...
 //CAMBIAR ESTRUCTURA A MVC + POO
 // TAMAÑO LETRAS Y COLOR UNIVERSAL
 // ACCESOS DE TECLADO EN BARRA DE HERRAMIENTAS
